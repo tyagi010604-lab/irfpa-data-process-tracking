@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IRFPA/DDCA Runsheet – DRDO</title>
+<style>
+/* ───────── Reset & Base ───────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#1f2937;background:#f9fafb;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit}
+
+/* ───────── Design tokens ───────── */
+:root{
+  --blue:#2563eb;--blue-h:#1d4ed8;--blue-l:#dbeafe;
+  --green:#16a34a;--green-l:#dcfce7;
+  --red:#dc2626;--red-l:#fee2e2;
+  --orange:#ea580c;--orange-l:#ffedd5;
+  --purple:#7c3aed;--purple-l:#ede9fe;
+  --indigo:#4338ca;--indigo-l:#e0e7ff;
+  --yellow:#ca8a04;--yellow-l:#fef9c3;
+  --gray:#6b7280;--gray-l:#f3f4f6;
+  --border:#e5e7eb;
+  --shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.06);
+  --radius:8px;
+}
+
+/* ───────── Layout ───────── */
+.container{max-width:1200px;margin:0 auto;padding:0 16px}
+.flex{display:flex}.flex-col{flex-direction:column}
+.items-center{align-items:center}.justify-between{justify-content:space-between}
+.justify-center{justify-content:center}
+.gap-2{gap:8px}.gap-4{gap:16px}.gap-6{gap:24px}
+.grid{display:grid}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+@media(max-width:1024px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+.hidden{display:none!important}
+.w-full{width:100%}
+.mt-2{margin-top:8px}.mt-4{margin-top:16px}.mt-6{margin-top:24px}
+.mb-2{margin-bottom:8px}.mb-4{margin-bottom:16px}
+.p-4{padding:16px}.p-3{padding:12px}.p-2{padding:8px}
+.px-4{padding-left:16px;padding-right:16px}
+.py-2{padding-top:8px;padding-bottom:8px}
+.space-y-2>*+*{margin-top:8px}
+.space-y-4>*+*{margin-top:16px}
+
+/* ───────── Cards ───────── */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-header{padding:20px 20px 0}
+.card-body{padding:20px}
+.card-title{font-size:16px;font-weight:600;color:#111827}
+.card-desc{font-size:13px;color:var(--gray);margin-top:4px}
+
+/* ───────── Buttons ───────── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-weight:500;font-size:13px;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-h)}
+.btn-outline{background:#fff;color:#374151;border:1px solid var(--border)}.btn-outline:hover{background:var(--gray-l)}
+.btn-ghost{background:transparent;color:var(--gray)}.btn-ghost:hover{background:var(--gray-l)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{background:#b91c1c}
+.btn:disabled{opacity:.5;pointer-events:none}
+
+/* ───────── Forms ───────── */
+.form-label{display:block;font-size:13px;font-weight:500;color:#374151;margin-bottom:4px}
+.form-control{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;color:#111827;background:#fff;transition:border-color .15s}
+.form-control:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+textarea.form-control{resize:vertical;min-height:80px}
+select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px;padding-right:32px}
+
+/* ───────── Badges ───────── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-default{background:var(--blue);color:#fff}
+.badge-secondary{background:#e5e7eb;color:#374151}
+.badge-outline{background:transparent;border:1px solid currentColor}
+.badge-green{background:var(--green-l);color:var(--green)}
+.badge-red{background:var(--red-l);color:var(--red)}
+.badge-orange{background:var(--orange-l);color:var(--orange)}
+.badge-purple{background:var(--purple-l);color:var(--purple)}
+.badge-blue{background:var(--blue-l);color:var(--blue)}
+
+/* ───────── Tabs ───────── */
+.tabs-list{display:flex;background:#f3f4f6;border-radius:8px;padding:4px;gap:2px;margin-bottom:24px}
+.tab-btn{flex:1;padding:8px 16px;border-radius:6px;font-weight:500;font-size:13px;color:var(--gray);transition:all .15s;text-align:center}
+.tab-btn.active{background:#fff;color:#111827;box-shadow:var(--shadow)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ───────── Tables ───────── */
+.table-wrapper{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead{background:#f9fafb}
+th{padding:10px 12px;text-align:left;font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+
+/* ───────── Header ───────── */
+.site-header{background:#fff;border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+.header-inner{height:60px;display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 16px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-icon{width:36px;height:36px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;font-size:16px}
+.logo-text{font-weight:700;font-size:16px}
+.header-right{display:flex;align-items:center;gap:12px}
+.user-info{font-size:13px;color:var(--gray)}
+
+/* ───────── Login Screen ───────── */
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#eff6ff,#eef2ff);padding:20px}
+.login-card{background:#fff;border-radius:12px;box-shadow:var(--shadow-md);width:100%;max-width:420px;padding:32px}
+.login-card h1{text-align:center;font-size:22px;font-weight:700;color:#111827}
+.login-card p{text-align:center;color:var(--gray);font-size:13px;margin-top:4px;margin-bottom:24px}
+
+/* ───────── Stage Cards (Dashboard) ───────── */
+.stage-card{border-radius:var(--radius);border:1px solid var(--border);padding:16px;background:#fff;transition:box-shadow .15s}
+.stage-card.accessible{cursor:pointer}.stage-card.accessible:hover{box-shadow:var(--shadow-md)}
+.stage-card.locked{opacity:.5}
+.stage-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.stage-count{font-size:26px;font-weight:700;color:#111827}
+
+/* Stage colours */
+.bg-blue{background:var(--blue);color:#fff}
+.bg-green{background:var(--green);color:#fff}
+.bg-purple{background:var(--purple);color:#fff}
+.bg-orange{background:var(--orange);color:#fff}
+.bg-red{background:var(--red);color:#fff}
+.bg-indigo{background:var(--indigo);color:#fff}
+.bg-yellow{background:var(--yellow);color:#fff}
+.bg-gray{background:var(--gray);color:#fff}
+
+/* ───────── Progress bar ───────── */
+.progress-bar{height:6px;background:#e5e7eb;border-radius:9999px;overflow:hidden}
+.progress-fill{height:100%;border-radius:9999px;transition:width .3s}
+
+/* ───────── Modal ───────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:#fff;border-radius:12px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-header{padding:20px 20px 0;display:flex;justify-content:space-between;align-items:flex-start}
+.modal-body{padding:20px}
+.modal-title{font-size:17px;font-weight:600}
+.modal-desc{font-size:13px;color:var(--gray);margin-top:4px}
+.modal-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--gray);font-size:20px;flex-shrink:0}
+.modal-close:hover{background:var(--gray-l)}
+
+/* ───────── Alert ───────── */
+.alert{display:flex;gap:8px;padding:12px;border-radius:8px;background:var(--blue-l);color:var(--blue);border:1px solid #bfdbfe;font-size:13px}
+
+/* ───────── Activity feed ───────── */
+.activity-item{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--gray-l);border-radius:8px}
+.activity-item p{font-size:13px;font-weight:500}
+.activity-item span{font-size:12px;color:var(--gray)}
+
+/* ───────── Stats boxes ───────── */
+.stat-box{padding:16px;border-radius:8px}
+.stat-box .stat-num{font-size:28px;font-weight:700}
+.stat-box .stat-label{font-size:12px;margin-top:2px}
+
+/* ───────── Comparison panel ───────── */
+.compare-stage{border:1px solid var(--border);border-radius:8px;padding:12px}
+.compare-stage-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.compare-params{margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:600px){.compare-params{grid-template-columns:repeat(2,1fr)}}
+.param-check{display:flex;align-items:center;gap:6px;font-size:13px}
+.param-check input[type=checkbox]{width:14px;height:14px;accent-color:var(--blue)}
+
+/* ───────── Image thumbnail ───────── */
+.thumb{width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--border);cursor:pointer;transition:transform .15s}
+.thumb:hover{transform:scale(1.1)}
+
+/* ───────── Toast ───────── */
+#toast{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast-item{padding:12px 16px;border-radius:8px;color:#fff;font-size:13px;font-weight:500;box-shadow:var(--shadow-md);opacity:1;transition:opacity .3s;pointer-events:auto;max-width:320px}
+.toast-success{background:var(--green)}
+.toast-error{background:var(--red)}
+.toast-info{background:var(--blue)}
+
+/* ───────── Spinner ───────── */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ───────── Scrollable table area ───────── */
+.table-area{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
+
+/* ───────── Device grid ───────── */
+.device-card{border:1px solid var(--border);border-radius:8px;padding:14px}
+.device-name{font-weight:600;font-size:13px}
+
+/* ───────── Chevron ───────── */
+.chevron{display:inline-block;transition:transform .2s}
+.chevron.open{transform:rotate(90deg)}
+</style>
+</head>
+<body>
+
+<!-- Toast container -->
+<div id="toast"></div>
+
+<!-- ─────────────────────────────────────────────────
+     LOGIN SCREEN
+───────────────────────────────────────────────── -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="width:56px;height:56px;background:var(--blue);border-radius:12px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:700">IR</div>
+    </div>
+    <h1>IRFPA/DDCA Runsheet</h1>
+    <p>DRDO-Secure Access Portal</p>
+
+    <!-- Tab switcher -->
+    <div class="tabs-list" style="margin-bottom:20px">
+      <button class="tab-btn active" onclick="switchLoginTab('signin')">Sign In</button>
+      <button class="tab-btn" onclick="switchLoginTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- Sign In -->
+    <div id="signinPanel">
+      <div class="space-y-4">
+        <div>
+          <label class="form-label">Username</label>
+          <input id="loginUser" class="form-control" type="text" placeholder="Enter your username" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div>
+          <label class="form-label">Password</label>
+          <input id="loginPass" class="form-control" type="password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div id="loginError" class="hidden" style="color:var(--red);font-size:13px;padding:8px;background:var(--red-l);border-radius:6px"></div>
+        <button class="btn btn-primary w-full" onclick="doLogin()"><span id="loginBtnText">Sign In</span></button>
+      </div>
+    </div>
+
+    <!-- Sign Up -->
+    <div id="signupPanel" class="hidden">
+      <div class="space-y-4">
+        <div>
+          <label class="form-label">Username</label>
+          <input id="suUser" class="form-control" type="text" placeholder="Choose a username">
+        </div>
+        <div>
+          <label class="form-label">Email</label>
+          <input id="suEmail" class="form-control" type="email" placeholder="Enter your email">
+        </div>
+        <div>
+          <label class="form-label">Password</label>
+          <input id="suPass" class="form-control" type="password" placeholder="Create a password">
+        </div>
+        <div>
+          <label class="form-label">Confirm Password</label>
+          <input id="suPass2" class="form-control" type="password" placeholder="Confirm your password">
+        </div>
+        <div>
+          <label class="form-label">Requested Stage Access</label>
+          <select id="suStage" class="form-control">
+            <option value="">Select stage for access request</option>
+            <option value="czt_substrate">CZT Substrate</option>
+            <option value="epilayer">Epilayer</option>
+            <option value="fabrication">Fabrication</option>
+            <option value="measurement">Measurement</option>
+            <option value="hybridization">Hybridization</option>
+            <option value="assembly">Assembly</option>
+            <option value="testing">Testing and Demonstration</option>
+            <option value="archive">Archive</option>
+          </select>
+        </div>
+        <button class="btn btn-primary w-full" onclick="doSignup()">Request Access</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────
+     MAIN APP (hidden until logged in)
+───────────────────────────────────────────────── -->
+<div id="mainApp" class="hidden">
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">IR</div>
+        <div>
+          <div class="logo-text">IRFPA/DDCA Runsheet</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <span id="roleTag" class="badge badge-default"></span>
+        <span class="user-info">Welcome, <strong id="headerUsername"></strong></span>
+        <button class="btn btn-outline btn-sm" onclick="doLogout()">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="container" style="padding-top:24px;padding-bottom:40px">
+    <!-- Tabs -->
+    <div class="tabs-list" id="mainTabs">
+      <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+      <button class="tab-btn" onclick="switchTab('dataentry')">Data Entry</button>
+      <button class="tab-btn" onclick="switchTab('comparison')">Parameter Comparison</button>
+      <button class="tab-btn hidden" id="adminTabBtn" onclick="switchTab('admin')">Administration</button>
+    </div>
+
+    <!-- ── DASHBOARD ── -->
+    <div id="tab-dashboard" class="tab-panel active">
+      <!-- Stage cards -->
+      <div class="grid grid-4 gap-4" id="stageCardsGrid"></div>
+
+      <!-- Device status -->
+      <div class="card mt-6">
+        <div class="card-header">
+          <div class="card-title">Device Processing Status</div>
+          <div class="card-desc">Track completion progress and archival status for all devices</div>
+        </div>
+        <div class="card-body">
+          <div class="grid grid-3 gap-4" id="deviceGrid">
+            <div style="color:var(--gray);grid-column:1/-1;text-align:center;padding:32px">No device data yet. Add entries to see device progress.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent activity -->
+      <div class="card mt-6">
+        <div class="card-header">
+          <div class="card-title">Recent Activity</div>
+          <div class="card-desc">Latest data entries and system changes</div>
+        </div>
+        <div class="card-body">
+          <div class="space-y-2" id="recentActivity">
+            <div style="color:var(--gray);text-align:center;padding:20px">No recent activity</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DATA ENTRY ── -->
+    <div id="tab-dataentry" class="tab-panel">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h2 style="font-size:20px;font-weight:700">Data Entry</h2>
+          <p style="color:var(--gray);font-size:13px">Add new parameter values to your assigned stages</p>
+        </div>
+        <button class="btn btn-primary" onclick="openEntryModal()">+ Add Entry</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Your Data Entries</div>
+          <div class="card-desc">Recent entries you have access to</div>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div class="table-area" style="border:none">
+            <table>
+              <thead>
+                <tr>
+                  <th>Device</th><th>Stage</th><th>Parameter</th>
+                  <th>Image</th><th>Value</th><th>Unit</th>
+                  <th>Updated By</th><th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="entryTable">
+                <tr><td colspan="8" style="text-align:center;color:var(--gray);padding:32px">No entries yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── COMPARISON ── -->
+    <div id="tab-comparison" class="tab-panel">
+      <div class="mb-4">
+        <h2 style="font-size:20px;font-weight:700">Parameter Comparison</h2>
+        <p style="color:var(--gray);font-size:13px">Select parameters from different stages to compare across multiple devices</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Select Parameters for Comparison</div>
+          <div class="card-desc">Click on stages to expand and select specific parameters</div>
+        </div>
+        <div class="card-body space-y-2" id="compareStages"></div>
+      </div>
+
+      <div class="card mt-4 hidden" id="compareResultCard">
+        <div class="card-header">
+          <div class="card-title">Comparison Results</div>
+          <div class="card-desc">Data for selected parameters across all devices and stages</div>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div class="table-area" style="border:none">
+            <table>
+              <thead>
+                <tr>
+                  <th>Device</th><th>Stage</th><th>Parameter</th>
+                  <th>Image</th><th>Value</th><th>Unit</th>
+                  <th>Last Updated</th><th>Updated By</th>
+                </tr>
+              </thead>
+              <tbody id="compareTable">
+                <tr><td colspan="8" style="text-align:center;color:var(--gray);padding:32px">No data for selected parameters</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADMIN ── -->
+    <div id="tab-admin" class="tab-panel">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h2 style="font-size:20px;font-weight:700">System Administration</h2>
+          <p style="color:var(--gray);font-size:13px">Manage users, access controls, and system audit logs</p>
+        </div>
+        <button class="btn btn-outline" onclick="exportAudit()">⬇ Export Audit Log</button>
+      </div>
+
+      <!-- User Management -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">User Management</div>
+          <div class="card-desc">Manage user accounts and stage assignments</div>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div class="table-area" style="border:none">
+            <table>
+              <thead>
+                <tr><th>Username</th><th>Role</th><th>Assigned Stage</th><th>Last Login</th><th>Status</th></tr>
+              </thead>
+              <tbody id="userTable">
+                <tr><td colspan="5" style="text-align:center;color:var(--gray);padding:24px">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Archive Management -->
+      <div class="card mt-6">
+        <div class="card-header">
+          <div class="card-title">Archive Management</div>
+          <div class="card-desc">View and manage archived device data</div>
+        </div>
+        <div class="card-body">
+          <div class="grid grid-4 gap-4 mb-4" id="archiveStats"></div>
+          <h4 style="font-weight:600;margin-bottom:12px">Recently Archived Devices</h4>
+          <div class="table-area">
+            <table>
+              <thead>
+                <tr>
+                  <th>Device</th><th>Archive Date</th><th>Storage Location</th>
+                  <th>Doc Status</th><th>Access Level</th><th>Total Entries</th>
+                </tr>
+              </thead>
+              <tbody id="archiveTable">
+                <tr><td colspan="6" style="text-align:center;color:var(--gray);padding:32px">No archived devices yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audit Log -->
+      <div class="card mt-6">
+        <div class="card-header">
+          <div class="card-title">System Audit Log</div>
+          <div class="card-desc">Complete history of system changes and data modifications</div>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div class="table-area" style="border:none">
+            <table>
+              <thead>
+                <tr><th>Timestamp</th><th>User</th><th>Action</th><th>Stage</th><th>Element</th><th>New Value</th></tr>
+              </thead>
+              <tbody id="auditTable">
+                <tr><td colspan="6" style="text-align:center;color:var(--gray);padding:24px">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ─────────────────────────────────────────────────
+     DATA ENTRY MODAL
+───────────────────────────────────────────────── -->
+<div id="entryModal" class="modal-overlay hidden" onclick="if(event.target===this)closeEntryModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Add New Data Entry</div>
+        <div class="modal-desc">Enter parameter values for the selected stage</div>
+      </div>
+      <button class="modal-close" onclick="closeEntryModal()">×</button>
+    </div>
+    <div class="modal-body space-y-4">
+      <div class="grid grid-2 gap-4">
+        <div>
+          <label class="form-label">Stage</label>
+          <select id="entryStage" class="form-control" onchange="updateEntryParams()">
+            <option value="">Select a stage</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Device</label>
+          <select id="entryDevice" class="form-control">
+            <option value="">Select device</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="entryExtraFields" class="hidden space-y-4">
+        <div>
+          <label class="form-label">Parameter</label>
+          <select id="entryParam" class="form-control">
+            <option value="">Select a parameter</option>
+          </select>
+        </div>
+        <div class="grid grid-2 gap-4">
+          <div>
+            <label class="form-label">Value</label>
+            <input id="entryValue" class="form-control" type="text" placeholder="Enter value">
+          </div>
+          <div>
+            <label class="form-label">Unit</label>
+            <input id="entryUnit" class="form-control" type="text" placeholder="e.g. μm, °C, %">
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Notes (Optional)</label>
+          <textarea id="entryNotes" class="form-control" placeholder="Additional notes or observations"></textarea>
+        </div>
+        <div>
+          <label class="form-label">Sample Image (Optional)</label>
+          <div class="flex gap-2 items-center">
+            <input id="entryImage" class="form-control" type="file" accept="image/*" onchange="previewImage(this)">
+          </div>
+          <div id="imagePreview" class="hidden mt-2" style="font-size:12px;color:var(--gray);display:flex;align-items:center;gap:8px">
+            <img id="previewThumb" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--border)">
+            <span id="imageName"></span>
+          </div>
+        </div>
+        <button class="btn btn-primary w-full" onclick="saveEntry()">Save Entry</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────
+     IMAGE VIEWER MODAL
+───────────────────────────────────────────────── -->
+<div id="imgModal" class="modal-overlay hidden" onclick="this.classList.add('hidden')">
+  <div style="max-width:90vw;max-height:90vh;text-align:center">
+    <img id="imgModalSrc" style="max-width:100%;max-height:85vh;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+    <div style="margin-top:12px;color:#fff;font-size:13px">Click anywhere to close</div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────────
+let token = localStorage.getItem('irfpa_token') || '';
+let currentUser = null;
+let stages = [];
+let allEntries = [];
+let selectedParams = [];
+
+const STAGE_ELEMENTS = {
+  czt_substrate: ['Silicon_Thickness','Doping_Level','Crystal_Orientation','Surface_Roughness'],
+  epilayer:      ['Layer_Thickness','Composition_Ratio','Growth_Rate','Temperature'],
+  fabrication:   ['Etch_Depth','Line_Width','Aspect_Ratio','Process_Time'],
+  measurement:   ['Responsivity','Dark_Current','Noise_Level','Quantum_Efficiency'],
+  hybridization: ['Bond_Strength','Alignment_Accuracy','Thermal_Resistance','Electrical_Contact'],
+  assembly:      ['Package_Type','Seal_Quality','Thermal_Path','Mechanical_Stress'],
+  testing:       ['Performance_Grade','Reliability_Score','Environmental_Test','Functional_Test'],
+  archive:       ['Storage_Location','Documentation_Status','Retention_Period','Access_Level']
+};
+
+const STAGE_META = {
+  czt_substrate: {name:'CZT Substrate',       color:'bg-blue',   icon:'🔬'},
+  epilayer:      {name:'Epilayer',             color:'bg-green',  icon:'🧬'},
+  fabrication:   {name:'Fabrication',          color:'bg-purple', icon:'⚙️'},
+  measurement:   {name:'Measurement',          color:'bg-orange', icon:'📊'},
+  hybridization: {name:'Hybridization',        color:'bg-red',    icon:'🔗'},
+  assembly:      {name:'Assembly',             color:'bg-indigo', icon:'🔧'},
+  testing:       {name:'Testing and Demonstration', color:'bg-yellow', icon:'🧪'},
+  archive:       {name:'Archive',              color:'bg-gray',   icon:'🗄️'}
+};
+
+const PROC_STAGES = ['czt_substrate','epilayer','fabrication','measurement','hybridization','assembly','testing'];
+
+// ─────────────────────────────────────────────────
+// API helper
+// ─────────────────────────────────────────────────
+async function api(method, path, body=null) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' }
+  };
+  if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+  if (body)  opts.body = JSON.stringify(body);
+  const r = await fetch(path, opts);
+  if (!r.ok) {
+    const j = await r.json().catch(()=>({error:'Request failed'}));
+    throw new Error(j.error || r.statusText);
+  }
+  // For CSV export, return blob
+  const ct = r.headers.get('Content-Type') || '';
+  if (ct.includes('text/csv')) return r.blob();
+  if (ct.includes('text/plain')) return r.text();
+  return r.json();
+}
+
+// ─────────────────────────────────────────────────
+// Toast
+// ─────────────────────────────────────────────────
+function toast(msg, type='info') {
+  const el = document.createElement('div');
+  el.className = `toast-item toast-${type}`;
+  el.textContent = msg;
+  document.getElementById('toast').appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; setTimeout(()=>el.remove(), 300); }, 3000);
+}
+
+// ─────────────────────────────────────────────────
+// Login / Logout
+// ─────────────────────────────────────────────────
+function switchLoginTab(tab) {
+  document.getElementById('signinPanel').classList.toggle('hidden', tab !== 'signin');
+  document.getElementById('signupPanel').classList.toggle('hidden', tab !== 'signup');
+  document.querySelectorAll('#loginScreen .tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active', (i===0 && tab==='signin') || (i===1 && tab==='signup'));
+  });
+}
+
+async function doLogin() {
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+  const errEl    = document.getElementById('loginError');
+  errEl.classList.add('hidden');
+  if (!username || !password) { errEl.textContent='Fill in all fields'; errEl.classList.remove('hidden'); return; }
+
+  const btn  = document.querySelector('#signinPanel button');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<span class="spinner"></span> Signing in...';
+  btn.disabled  = true;
+
+  try {
+    const res = await api('POST', '/api/auth/login', {username, password});
+    token       = res.access_token;
+    currentUser = res.user;
+    localStorage.setItem('irfpa_token', token);
+    initApp();
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  } finally {
+    btn.innerHTML = orig;
+    btn.disabled  = false;
+  }
+}
+
+function doSignup() {
+  const u = document.getElementById('suUser').value.trim();
+  const p = document.getElementById('suPass').value;
+  const p2= document.getElementById('suPass2').value;
+  if (!u || !p) { toast('Fill in all required fields', 'error'); return; }
+  if (p !== p2)  { toast('Passwords do not match', 'error'); return; }
+  toast('Access request submitted! Please wait for admin approval.', 'info');
+  ['suUser','suEmail','suPass','suPass2'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('suStage').value='';
+}
+
+function doLogout() {
+  token = '';
+  currentUser = null;
+  localStorage.removeItem('irfpa_token');
+  document.getElementById('mainApp').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+}
+
+// ─────────────────────────────────────────────────
+// App initialisation
+// ─────────────────────────────────────────────────
+async function initApp() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('mainApp').classList.remove('hidden');
+
+  document.getElementById('headerUsername').textContent = currentUser.username;
+  const roleTag = document.getElementById('roleTag');
+  roleTag.textContent = currentUser.role === 'admin' ? 'System Administrator' : 'Operator';
+  roleTag.className = currentUser.role === 'admin' ? 'badge badge-default' : 'badge badge-secondary';
+
+  if (currentUser.role === 'admin') {
+    document.getElementById('adminTabBtn').classList.remove('hidden');
+  }
+
+  // Populate device dropdown (1-25)
+  const dev = document.getElementById('entryDevice');
+  for (let i=1;i<=25;i++) {
+    const o = document.createElement('option');
+    o.value = o.textContent = `Device ${i}`;
+    dev.appendChild(o);
+  }
+
+  // Populate stage dropdown for entry modal
+  const stSel = document.getElementById('entryStage');
+  Object.entries(STAGE_META).forEach(([id, meta]) => {
+    if (!canAccessStage(id)) return;
+    const o = document.createElement('option');
+    o.value = id; o.textContent = meta.name;
+    stSel.appendChild(o);
+  });
+
+  // Load data
+  await loadAll();
+  switchTab('dashboard');
+}
+
+function canAccessStage(stageId) {
+  if (!currentUser) return false;
+  if (currentUser.role === 'admin') return true;
+  return currentUser.assigned_stage === stageId;
+}
+
+async function loadAll() {
+  try {
+    stages      = await api('GET', '/api/stages');
+    allEntries  = await api('GET', '/api/data-entries');
+    renderDashboard();
+    renderEntryTable();
+    renderCompare();
+    if (currentUser.role === 'admin') {
+      renderAdmin();
+    }
+  } catch(e) {
+    toast('Failed to load data: ' + e.message, 'error');
+  }
+}
+
+// ─────────────────────────────────────────────────
+// Tab navigation
+// ─────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#mainTabs .tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  // Mark active tab button
+  const btns = [...document.querySelectorAll('#mainTabs .tab-btn')];
+  const map  = {dashboard:0, dataentry:1, comparison:2, admin:3};
+  const idx  = map[name];
+  const visible = btns.filter(b=>!b.classList.contains('hidden'));
+  if (visible[idx]) visible[idx].classList.add('active');
+}
+
+// ─────────────────────────────────────────────────
+// Dashboard
+// ─────────────────────────────────────────────────
+function renderDashboard() {
+  // Stage cards
+  const grid = document.getElementById('stageCardsGrid');
+  grid.innerHTML = '';
+  Object.entries(STAGE_META).forEach(([id, meta]) => {
+    const accessible = canAccessStage(id);
+    const count = allEntries.filter(e=>e.stage_id===id).length;
+    const div = document.createElement('div');
+    div.className = `stage-card ${accessible?'accessible':'locked'}`;
+    div.innerHTML = `
+      <div class="flex gap-3 items-center" style="margin-bottom:12px">
+        <div class="stage-icon ${meta.color}">${meta.icon}</div>
+        <div>
+          <div style="font-weight:600;font-size:13px">${meta.name}</div>
+          <div style="font-size:12px;color:var(--gray)">${count} entries</div>
+        </div>
+      </div>
+      <div class="stage-count">${accessible ? count : '—'}</div>
+      <div style="font-size:12px;color:var(--gray);margin-top:4px">${accessible?'Active parameters':'No access'}</div>
+    `;
+    grid.appendChild(div);
+  });
+
+  // Devices
+  renderDevices();
+
+  // Recent activity (audit-like from entries)
+  renderActivity();
+}
+
+function renderDevices() {
+  const grid = document.getElementById('deviceGrid');
+  const devices = [...new Set(allEntries.map(e=>e.device).filter(Boolean))].sort();
+
+  if (devices.length === 0) {
+    grid.innerHTML = '<div style="color:var(--gray);grid-column:1/-1;text-align:center;padding:32px">No device data yet. Add entries to see device progress.</div>';
+    return;
+  }
+
+  grid.innerHTML = '';
+  devices.forEach(dev => {
+    const devEntries = allEntries.filter(e=>e.device===dev);
+    const stagesHit  = new Set(devEntries.filter(e=>PROC_STAGES.includes(e.stage_id)).map(e=>e.stage_id));
+    const isArchived = devEntries.some(e=>e.stage_id==='archive');
+    const pct = Math.round(100 * stagesHit.size / PROC_STAGES.length);
+    const color = isArchived ? 'var(--green)' : pct===100 ? 'var(--blue)' : 'var(--orange)';
+
+    const div = document.createElement('div');
+    div.className = 'device-card';
+    div.innerHTML = `
+      <div class="flex justify-between items-center mb-2">
+        <span class="device-name">${esc(dev)}</span>
+        <span class="badge ${isArchived?'badge-green':'badge-outline'} ${isArchived?'':'text-gray-600'}">
+          ${isArchived ? '🗄️ Archived' : pct + '%'}
+        </span>
+      </div>
+      <div style="font-size:12px;color:var(--gray);display:flex;justify-content:space-between;margin-bottom:4px">
+        <span>Progress</span><span>${stagesHit.size}/${PROC_STAGES.length} stages</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:${pct}%;background:${color}"></div>
+      </div>
+      ${pct===100 && !isArchived ? '<div style="font-size:12px;color:var(--blue);margin-top:6px">⏳ Ready for auto-archiving</div>' : ''}
+      ${isArchived ? '<div style="font-size:12px;color:var(--green);margin-top:6px">✅ Processing complete & archived</div>' : ''}
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function renderActivity() {
+  const feed = document.getElementById('recentActivity');
+  const last5 = allEntries.slice(-5).reverse();
+  if (last5.length === 0) {
+    feed.innerHTML = '<div style="color:var(--gray);text-align:center;padding:20px">No recent activity</div>';
+    return;
+  }
+  feed.innerHTML = last5.map(e => `
+    <div class="activity-item">
+      <div>
+        <p>${esc(e.created_by)} added <strong>${esc(e.element_name.replace(/_/g,' '))}</strong> to ${esc(stName(e.stage_id))} for ${esc(e.device||'—')}</p>
+        <span>${fmtDate(e.created_at)}</span>
+      </div>
+      <span class="badge badge-secondary">${esc(e.value)} ${esc(e.unit)}</span>
+    </div>
+  `).join('');
+}
+
+// ─────────────────────────────────────────────────
+// Data Entry table
+// ─────────────────────────────────────────────────
+function renderEntryTable() {
+  const tbody = document.getElementById('entryTable');
+  const visible = allEntries.slice(-20).reverse();
+  if (visible.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gray);padding:32px">No entries yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = visible.map(e => `
+    <tr>
+      <td><span class="badge badge-secondary">${esc(e.device||'—')}</span></td>
+      <td><span class="badge badge-outline">${esc(stName(e.stage_id))}</span></td>
+      <td style="font-weight:500">${esc(e.element_name.replace(/_/g,' '))}</td>
+      <td>${e.has_image
+        ? `<img src="" class="thumb" data-entry-id="${e.id}" onclick="viewImage(${e.id})" title="Click to view">`
+        : '<span style="color:var(--gray);font-size:12px">No image</span>'}</td>
+      <td>${esc(e.value)}</td>
+      <td>${esc(e.unit)}</td>
+      <td>${esc(e.created_by)}</td>
+      <td style="font-size:12px;color:var(--gray)">${fmtDate(e.created_at)}</td>
+    </tr>
+  `).join('');
+
+  // Load image thumbnails lazily
+  visible.filter(e=>e.has_image).forEach(async e=>{
+    try {
+      const dataUrl = await api('GET', `/api/data-entries/${e.id}/image`);
+      const img = document.querySelector(`img[data-entry-id="${e.id}"]`);
+      if (img) img.src = dataUrl;
+    } catch {}
+  });
+}
+
+async function viewImage(entryId) {
+  try {
+    const dataUrl = await api('GET', `/api/data-entries/${entryId}/image`);
+    document.getElementById('imgModalSrc').src = dataUrl;
+    document.getElementById('imgModal').classList.remove('hidden');
+  } catch(e) { toast('Could not load image', 'error'); }
+}
+
+// ─────────────────────────────────────────────────
+// Entry Modal
+// ─────────────────────────────────────────────────
+function openEntryModal() {
+  document.getElementById('entryStage').value = '';
+  document.getElementById('entryDevice').value = '';
+  document.getElementById('entryParam').innerHTML = '<option value="">Select a parameter</option>';
+  document.getElementById('entryValue').value = '';
+  document.getElementById('entryUnit').value = '';
+  document.getElementById('entryNotes').value = '';
+  document.getElementById('entryImage').value = '';
+  document.getElementById('imagePreview').classList.add('hidden');
+  document.getElementById('entryExtraFields').classList.add('hidden');
+  document.getElementById('entryModal').classList.remove('hidden');
+
+  // Pre-select stage for operators
+  if (currentUser.role === 'operator') {
+    document.getElementById('entryStage').value = currentUser.assigned_stage;
+    updateEntryParams();
+  }
+}
+
+function closeEntryModal() {
+  document.getElementById('entryModal').classList.add('hidden');
+}
+
+function updateEntryParams() {
+  const stageId = document.getElementById('entryStage').value;
+  const extra   = document.getElementById('entryExtraFields');
+  const paramSel= document.getElementById('entryParam');
+  if (!stageId) { extra.classList.add('hidden'); return; }
+  extra.classList.remove('hidden');
+  paramSel.innerHTML = '<option value="">Select a parameter</option>';
+  (STAGE_ELEMENTS[stageId] || []).forEach(p=>{
+    const o = document.createElement('option');
+    o.value = p; o.textContent = p.replace(/_/g,' ');
+    paramSel.appendChild(o);
+  });
+}
+
+function previewImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('previewThumb').src = e.target.result;
+    document.getElementById('imageName').textContent = file.name;
+    document.getElementById('imagePreview').classList.remove('hidden');
+    document.getElementById('imagePreview').style.display='flex';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveEntry() {
+  const stage_id     = document.getElementById('entryStage').value;
+  const device       = document.getElementById('entryDevice').value;
+  const element_name = document.getElementById('entryParam').value;
+  const value        = document.getElementById('entryValue').value.trim();
+  const unit         = document.getElementById('entryUnit').value.trim();
+  const notes        = document.getElementById('entryNotes').value.trim();
+  const imgFile      = document.getElementById('entryImage').files[0];
+
+  if (!stage_id || !device || !element_name || !value) {
+    toast('Fill in Stage, Device, Parameter and Value', 'error'); return;
+  }
+
+  let image_data = '', image_name = '';
+  if (imgFile) {
+    image_data = await new Promise(res=>{
+      const r = new FileReader();
+      r.onload = e => res(e.target.result);
+      r.readAsDataURL(imgFile);
+    });
+    image_name = imgFile.name;
+  }
+
+  const btn = document.querySelector('#entryModal button[onclick="saveEntry()"]');
+  btn.innerHTML = '<span class="spinner"></span> Saving...';
+  btn.disabled = true;
+
+  try {
+    const entry = await api('POST', '/api/data-entries', {stage_id, element_name, value, unit, device, notes, image_data, image_name});
+    allEntries.push({...entry, created_by: currentUser.username, has_image: !!image_data});
+    toast('Entry saved!', 'success');
+    closeEntryModal();
+    renderDashboard();
+    renderEntryTable();
+    renderCompare();
+    if (currentUser.role === 'admin') renderAdmin();
+  } catch(e) {
+    toast('Error: ' + e.message, 'error');
+  } finally {
+    btn.innerHTML = 'Save Entry';
+    btn.disabled = false;
+  }
+}
+
+// ─────────────────────────────────────────────────
+// Comparison
+// ─────────────────────────────────────────────────
+function renderCompare() {
+  const container = document.getElementById('compareStages');
+  container.innerHTML = '';
+  Object.entries(STAGE_META).forEach(([id, meta]) => {
+    const accessible = canAccessStage(id);
+    const params     = STAGE_ELEMENTS[id] || [];
+    const selCount   = params.filter(p=>selectedParams.includes(p)).length;
+
+    const div = document.createElement('div');
+    div.className = 'compare-stage';
+    div.innerHTML = `
+      <div class="compare-stage-header ${accessible?'':'opacity-50'}" onclick="${accessible?`toggleCompareStage('${id}')`:''}">
+        <div class="flex items-center gap-3">
+          <div class="stage-icon ${meta.color}" style="width:32px;height:32px;font-size:14px">${meta.icon}</div>
+          <div>
+            <div style="font-weight:600">${meta.name}</div>
+            <div style="font-size:12px;color:var(--gray)">${params.length} parameters available</div>
+          </div>
+        </div>
+        ${accessible ? `<div class="flex items-center gap-2">
+          <span class="badge badge-outline">${selCount} selected</span>
+          <span class="chevron" id="chev-${id}">▶</span>
+        </div>` : ''}
+      </div>
+      <div id="params-${id}" class="hidden compare-params mt-3">
+        ${params.map(p=>`
+          <label class="param-check">
+            <input type="checkbox" value="${p}" ${selectedParams.includes(p)?'checked':''}
+                   onchange="toggleParam('${p}',this.checked)">
+            ${p.replace(/_/g,' ')}
+          </label>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  updateCompareResults();
+}
+
+function toggleCompareStage(id) {
+  const panel = document.getElementById('params-' + id);
+  const chev  = document.getElementById('chev-' + id);
+  panel.classList.toggle('hidden');
+  chev.classList.toggle('open');
+}
+
+function toggleParam(param, checked) {
+  if (checked) { if (!selectedParams.includes(param)) selectedParams.push(param); }
+  else          { selectedParams = selectedParams.filter(p=>p!==param); }
+  updateCompareResults();
+}
+
+function updateCompareResults() {
+  const card  = document.getElementById('compareResultCard');
+  const tbody = document.getElementById('compareTable');
+
+  if (selectedParams.length === 0) {
+    card.classList.add('hidden'); return;
+  }
+  card.classList.remove('hidden');
+
+  const filtered = allEntries.filter(e=>selectedParams.includes(e.element_name));
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gray);padding:32px">No data for selected parameters</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map(e=>`
+    <tr>
+      <td><span class="badge badge-secondary">${esc(e.device||'—')}</span></td>
+      <td><span class="badge badge-outline">${esc(stName(e.stage_id))}</span></td>
+      <td style="font-weight:500">${esc(e.element_name.replace(/_/g,' '))}</td>
+      <td>${e.has_image
+        ? `<img src="" class="thumb" data-cmp-id="${e.id}" onclick="viewImage(${e.id})">`
+        : '<span style="color:var(--gray);font-size:12px">—</span>'}</td>
+      <td>${esc(e.value)}</td>
+      <td>${esc(e.unit)}</td>
+      <td style="font-size:12px;color:var(--gray)">${fmtDate(e.created_at)}</td>
+      <td>${esc(e.created_by)}</td>
+    </tr>
+  `).join('');
+
+  // Load thumbnails
+  filtered.filter(e=>e.has_image).forEach(async e=>{
+    try {
+      const dataUrl = await api('GET', `/api/data-entries/${e.id}/image`);
+      const img = document.querySelector(`img[data-cmp-id="${e.id}"]`);
+      if (img) img.src = dataUrl;
+    } catch {}
+  });
+}
+
+// ─────────────────────────────────────────────────
+// Admin
+// ─────────────────────────────────────────────────
+async function renderAdmin() {
+  await Promise.all([renderUsers(), renderAuditLogs()]);
+  renderArchive();
+}
+
+async function renderUsers() {
+  const tbody = document.getElementById('userTable');
+  try {
+    const users = await api('GET', '/api/users');
+    if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray);padding:24px">No users found</td></tr>'; return; }
+    tbody.innerHTML = users.map(u=>`
+      <tr>
+        <td style="font-weight:500">${esc(u.username)}</td>
+        <td><span class="badge ${u.role==='admin'?'badge-default':'badge-secondary'}">${u.role}</span></td>
+        <td>${u.assigned_stage
+          ? `<span class="badge badge-outline">${esc(stName(u.assigned_stage))}</span>`
+          : '<span style="color:var(--gray)">All Stages</span>'}</td>
+        <td style="font-size:12px;color:var(--gray)">${u.last_login ? fmtDate(u.last_login) : 'Never'}</td>
+        <td>
+          <div class="flex items-center gap-2">
+            <span class="badge badge-outline ${u.is_active?'badge-green':'badge-red'}"
+                  style="cursor:pointer" onclick="toggleUser(${u.id})">
+              ${u.is_active ? 'Active' : 'Inactive'}
+            </span>
+            ${u.id != currentUser.id ? `<button class="btn btn-ghost btn-sm" onclick="toggleUser(${u.id})" title="${u.is_active?'Deactivate':'Activate'}">${u.is_active?'🔒':'🔓'}</button>` : ''}
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--red);padding:24px">${esc(e.message)}</td></tr>`;
+  }
+}
+
+async function toggleUser(id) {
+  try {
+    await api('POST', `/api/users/${id}/toggle`);
+    toast('User status updated', 'success');
+    renderUsers();
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
+
+async function renderAuditLogs() {
+  const tbody = document.getElementById('auditTable');
+  try {
+    const logs = await api('GET', '/api/audit-logs');
+    if (logs.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray);padding:24px">No audit logs yet</td></tr>'; return; }
+    tbody.innerHTML = logs.slice(0,20).map(l=>`
+      <tr>
+        <td style="font-size:12px;color:var(--gray)">${fmtDate(l.timestamp)}</td>
+        <td style="font-weight:500">${esc(l.username)}</td>
+        <td><span class="badge ${l.action==='CREATE'?'badge-default':'badge-secondary'}">${l.action}</span></td>
+        <td>${l.stage_id ? `<span class="badge badge-outline">${esc(stName(l.stage_id))}</span>` : '—'}</td>
+        <td>${esc((l.element_name||'').replace(/_/g,' '))}</td>
+        <td style="font-family:monospace;font-size:12px">${esc(l.new_value||'')}</td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--red);padding:24px">${esc(e.message)}</td></tr>`;
+  }
+}
+
+function renderArchive() {
+  const archEntries = allEntries.filter(e=>e.stage_id==='archive');
+  const archivedDevs= [...new Set(archEntries.map(e=>e.device).filter(Boolean))];
+
+  // Stats
+  const readyCount = [...new Set(allEntries.map(e=>e.device).filter(Boolean))].filter(dev=>{
+    const stages = new Set(allEntries.filter(e=>e.device===dev&&PROC_STAGES.includes(e.stage_id)).map(e=>e.stage_id));
+    return stages.size>=PROC_STAGES.length && !archivedDevs.includes(dev);
+  }).length;
+
+  document.getElementById('archiveStats').innerHTML = `
+    <div class="stat-box" style="background:var(--green-l)">
+      <div class="stat-num" style="color:var(--green)">${archivedDevs.length}</div>
+      <div class="stat-label" style="color:var(--green)">Archived Devices</div>
+    </div>
+    <div class="stat-box" style="background:var(--blue-l)">
+      <div class="stat-num" style="color:var(--blue)">${archEntries.length}</div>
+      <div class="stat-label" style="color:var(--blue)">Archive Entries</div>
+    </div>
+    <div class="stat-box" style="background:var(--orange-l)">
+      <div class="stat-num" style="color:var(--orange)">${readyCount}</div>
+      <div class="stat-label" style="color:var(--orange)">Ready to Archive</div>
+    </div>
+    <div class="stat-box" style="background:var(--gray-l)">
+      <div class="stat-num" style="color:var(--gray)">${archEntries.length}</div>
+      <div class="stat-label" style="color:var(--gray)">Auto-Archived</div>
+    </div>
+  `;
+
+  const tbody = document.getElementById('archiveTable');
+  if (archivedDevs.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray);padding:32px">No archived devices yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = archivedDevs.slice(-10).map(dev=>{
+    const de  = archEntries.filter(e=>e.device===dev);
+    const all = allEntries.filter(e=>e.device===dev);
+    const loc = de.find(e=>e.element_name==='Storage_Location');
+    const doc = de.find(e=>e.element_name==='Documentation_Status');
+    const acc = de.find(e=>e.element_name==='Access_Level');
+    return `
+      <tr>
+        <td><span class="badge badge-secondary">${esc(dev)}</span></td>
+        <td style="font-size:12px;color:var(--gray)">${de[0]?fmtDate(de[0].created_at):'—'}</td>
+        <td><span class="badge badge-outline">${esc(loc?.value||'—')}</span></td>
+        <td><span class="badge ${doc?.value==='Complete'?'badge-green':'badge-secondary'}">${esc(doc?.value||'—')}</span></td>
+        <td><span class="badge badge-outline" style="${acc?.value==='Restricted'?'color:var(--red);border-color:var(--red)':''}">${esc(acc?.value||'—')}</span></td>
+        <td style="font-family:monospace;font-size:12px">${all.length - de.length} + ${de.length} archive</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function exportAudit() {
+  try {
+    const blob = await api('GET', '/api/audit-logs/export');
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'irfpa_audit_log.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('Audit log exported', 'success');
+  } catch(e) { toast('Export failed: ' + e.message, 'error'); }
+}
+
+// ─────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function stName(id) {
+  return (STAGE_META[id] && STAGE_META[id].name) || id || '—';
+}
+
+function fmtDate(s) {
+  if (!s) return '—';
+  try { return new Date(s.includes('T')?s:s.replace(' ','T')+'Z').toLocaleString(); }
+  catch { return s; }
+}
+
+// ─────────────────────────────────────────────────
+// Auto-login if token stored
+// ─────────────────────────────────────────────────
+(async () => {
+  if (token) {
+    try {
+      currentUser = await api('GET', '/api/users/me');
+      initApp();
+    } catch {
+      token = '';
+      localStorage.removeItem('irfpa_token');
+    }
+  }
+})();
+</script>
+</body>
+</html>
