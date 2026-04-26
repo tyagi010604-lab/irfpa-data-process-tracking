@@ -1,3 +1,4 @@
+
 # IRFPA/DDCA Management System — C++ Edition
 
 A full-stack IRFPA runsheet management system with a C++ HTTP server backend and pure HTML/CSS/JavaScript frontend.
@@ -14,7 +15,6 @@ irfpa_cpp/
 
 > `irfpa_management.db` is created automatically on first run.
 
----
 
 ## Prerequisites
 
@@ -131,3 +131,7 @@ Authentication: `Authorization: Bearer <token>` header.
 - **Frontend**: Single HTML file — vanilla JS, no dependencies, communicates via fetch() to the REST API
 - **Database**: SQLite3 file (`irfpa_management.db`) — tables: `users`, `stages`, `data_entries`, `audit_logs`
 - **Security**: SHA-256 password hashing (OpenSSL), JWT with HMAC-SHA256 signatures, role-based access control
+=======
+# irfpa-data-process-tracking
+A data and process tracking application for IRFPA management that streamlines workflows, monitors activities in real time, and improves decision-making using structured data insights and reporting tools.
+>>>>>>> 84d7263c5e17f843d888462734d37f5514af25ae
